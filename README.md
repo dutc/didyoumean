@@ -1,4 +1,4 @@
-### Disclaimer
+#### Disclaimer
 
 dutc = Don't Use This Code (!!)
 
@@ -38,35 +38,35 @@ Maybe you meant: .bar
 >>>
 ```
 
-##### How do I install it?
+#### How do I install it?
 
 ```shell
 $ pip install dutc-didyoumean
 ```
 
-##### How Do I Turn It Off?
+#### How do I turn it off?
 
 Restart your interpreter.
 
-##### How does it work?
+#### How does it work?
 
 Well, see, that's the fun of it.
 
-##### Is this approach ‘portable’?
+#### Is this approach ‘portable’?
 
 Probably not.
 
-##### Does this approach work on ...?
+#### Does this approach work on ...?
 
 It works on Linux. It works on x86_64. 
 
 It's unfortunate that it works anywhere.
 
-##### Should I use this code?
+#### Should I use this code?
 
 Definitely not.
 
-##### License
+### License
 
 License (GPLv3)
 
