@@ -152,12 +152,13 @@ initdidyoumean(void) {
 	PyObject* builtin_str = PyString_FromString("__builtin__");
 	PyObject* builtin_mod = PyImport_Import(builtin_str);
     PyObject* builtin_dict = PyModule_GetDict(builtin_mod);
-	PyObject* builtin_getattr = PyCFunction_NewEx(builtin_methods, NULL, builtin_str);
 
-	if(builtin_getattr)
-		PyDict_SetItemString(builtin_dict, builtin_methods->ml_name, builtin_getattr);
+	/* we might be able to get a handle on __builtin__.getattr before
+ 	 *   this code runs, so let's just patch that directly */
+	PyObject* getattr_func = PyDict_GetItemString(builtin_dict, "getattr");
+	if(getattr_func)
+		((PyCFunctionObject*)getattr_func)->m_ml->ml_meth = hooked_builtin_getattr;
 
-	Py_XDECREF(builtin_getattr);
 	Py_DECREF(builtin_str);
 	Py_DECREF(builtin_mod);
 }
