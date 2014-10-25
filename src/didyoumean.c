@@ -187,6 +187,15 @@ static int hook_function(void* target, void* replace) {
 	return 0;
 }
 
+PyDoc_STRVAR(safe_getattr_doc,
+"getattr(object, name[, default]) -> value\n\
+\n\
+Get a named attribute from an object; getattr(x, 'y') is equivalent to x.y.\n\
+When a default argument is given, it is returned when the attribute doesn't\n\
+exist; without it, an exception is raised in that case.");
+
+PyMethodDef builtin_methods[1] = {{"getattr", safe_builtin_getattr, METH_VARARGS, safe_getattr_doc}};
+
 PyMODINIT_FUNC
 initdidyoumean(void) {
 	__asm__("");
@@ -195,4 +204,18 @@ initdidyoumean(void) {
 
 	if(hook_function(PyObject_GetAttr, &trampoline))
 		fprintf(stderr, "Function hooking failed.\n");
+
+	/* sometimes builtin_getattr calls to PyObject_Getattr get optimised out, 
+ 	 * so let's replace it with a safe version */
+	PyObject* builtin_str = PyString_FromString("__builtin__");
+	PyObject* builtin_mod = PyImport_Import(builtin_str);
+    PyObject* builtin_dict = PyModule_GetDict(builtin_mod);
+	PyObject* builtin_getattr = PyCFunction_NewEx(builtin_methods, NULL, builtin_str);
+
+	if(builtin_getattr)
+    	PyDict_SetItemString(builtin_dict, builtin_methods->ml_name, builtin_getattr);
+
+	Py_XDECREF(builtin_getattr);
+	Py_DECREF(builtin_str);
+	Py_DECREF(builtin_mod);
 }
