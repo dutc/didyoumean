@@ -1,6 +1,6 @@
 ### Disclaimer
 
-dutc = Don't Use This Code
+dutc = Don't Use This Code (!!)
 
 # Did You mean?
 
@@ -24,7 +24,7 @@ Traceback (most recent call last):
 AttributeError: 'Foo' object has no attribute 'baz'
 ```
 
-Importing and enabling `didyoumean`:
+After importing `didyoumean`:
 
 ```python
 >>> import didyoumean
@@ -38,21 +38,37 @@ Maybe you meant: .bar
 >>>
 ```
 
-### How Do I Turn It Off?
+How do I install it?
+--------------------
 
-You can't.
+```shell
+$ pip install dutc-didyoumean
+```
 
-### Is It Portable?
+How Do I Turn It Off?
+---------------------
+
+Restart your interpreter.
+
+How does it work?
+-----------------
+
+Well, see, that's the fun of it.
+
+Is this approach ‘portable’?
+----------------------------
 
 Probably not.
 
-### Does this approach work on ...?
+Does this approach work on ...?
+-------------------------------
 
 It works on Linux. It works on x86_64. 
 
 It's unfortunate that it works anywhere.
 
-### Should I Use This Code?
+Should I use this code?
+-----------------------
 
 Definitely not.
 
@@ -60,17 +76,16 @@ Definitely not.
 
 License (GPLv3)
 
-Copyright (C) 2013  James Powell <james@dontusethiscode.com>
+Copyright (C) 2014 James Powell <james@dontusethiscode.com>
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License along with
+this program. If not, see <http://www.gnu.org/licenses/>.
