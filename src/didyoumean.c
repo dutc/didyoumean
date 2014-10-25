@@ -144,46 +144,49 @@ PyDoc_STRVAR(module_doc,
 "This module implements a \"did you mean?\" functionality on getattr/LOAD_ATTR.\n"
 "(It's not so much what it does but how it does it.)");
 
+int unprotect_page(void* addr) {
+	int pagesize = sysconf(_SC_PAGE_SIZE);
+	int pagemask = ~(pagesize -1);
+	char* page = (char *)((size_t)addr & pagemask);
+	return mprotect(page, pagesize, PROT_READ | PROT_WRITE | PROT_EXEC);
+}
+
 PyMODINIT_FUNC
 initdidyoumean(void) {
 	__asm__("");
 
 	Py_InitModule3("didyoumean", module_methods, module_doc);
 
-	void* target = PyObject_GetAttr;
+	void* replace = &trampoline;
+	void* target  = PyObject_GetAttr;
 
-	char* page;
-	int rc;
-
-	int pagesize = sysconf(_SC_PAGE_SIZE);
-	void* addr = &trampoline;
-
-	page = (char *)addr;
-	page = (char *)((size_t) page & ~(pagesize - 1));
-	rc = mprotect(page, pagesize, PROT_READ | PROT_WRITE | PROT_EXEC);
-	if(rc) {
-		fprintf(stderr, "mprotect() failed.\n");
+	if(unprotect_page(replace)) {
+		fprintf(stderr, "Could not unprotect replace mem: %p\n", replace);
 		return;
 	}
 
+	if(unprotect_page(target)) {
+		fprintf(stderr, "Could not unprotect target mem: %p\n", target);
+		return;
+	}
+
+	/* find the NOP */
 	int count;
 	for(count = 0; count < 255; ++count)
-		if(((unsigned char*)addr)[count] == 0x90)
-			break; // found the NOP
+		if(((unsigned char*)replace)[count] == 0x90)
+			break; // found it!
 
+	/* shift everything down one */
 	int i;
 	for(i = count; i >= 0; --i)
-		((unsigned char*)addr)[i] = ((unsigned char*)addr)[i-1];
-	*((unsigned char *)addr) = 0x58;
+		((unsigned char*)replace)[i] = ((unsigned char*)replace)[i-1];
 
-	page = (char *)target;
-	page = (char *)((size_t) page & ~(pagesize - 1));
-	rc = mprotect(page, pagesize, PROT_READ | PROT_WRITE | PROT_EXEC);
-	if(rc) {
-		fprintf(stderr, "mprotect() failed.\n");
-		return;
-	}
-	
-	memcpy(jump_asm.addr, &addr, sizeof (void *));
+	/* add in pop %rax */
+	*((unsigned char *)replace) = 0x58;
+
+	/* set up the address */
+	memcpy(jump_asm.addr, &replace, sizeof (void *));
+
+	/* smash the target function */
 	memcpy(target, &jump_asm, sizeof jump_asm);
 }
