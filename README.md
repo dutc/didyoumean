@@ -57,6 +57,7 @@ It works on old-style classes, new-style classes, type objects, builtins, everyt
 
 ```python
 >>> # old-style class
+... 
 >>> class Foo:
 ...   def bar(self): pass
 ... 
@@ -69,7 +70,8 @@ Maybe you meant: .bar
 ```
 
 ```python
->>> # new-style
+>>> # new-style class
+... 
 >>> class Foo(object):
 ...   def quux(self): pass
 ... 
@@ -84,6 +86,7 @@ Maybe you meant: .quux
 
 ```python
 >>> # types
+... 
 >>> class Bar(Foo):
 ...   def xyzzy(self): pass
 ... 
@@ -104,6 +107,7 @@ Maybe you meant: .xyzzy
 
 ```python
 >>> # builtins & evertyhing else?
+... 
 >>> object._new__
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
@@ -121,6 +125,7 @@ Maybe you meant: .__new__
 
 ```python
 >>> # works with getattr
+... 
 >>> getattr(object, '_new__')
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
@@ -131,7 +136,8 @@ Maybe you meant: .__new__
 
 ```python
 >>> # works with getattr
->>> #   ... even if you don't want it to!
+... #   ... even if you don't want it to!
+... 
 >>> g = getattr
 >>> import didyoumean
 >>> getattr(object, '_new__')
