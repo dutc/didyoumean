@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <string.h>
 
-#include "include/didyoumean-safe.h"
+#include "didyoumean-safe.h"
 
 #if !(__x86_64__)
 	#error "This only works on x86_64"
