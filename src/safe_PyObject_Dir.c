@@ -1,5 +1,5 @@
 #include <Python.h>
-#include "didyoumean-safe.h"
+#include "safe_PyObject_Dir.h"
 
 static int safe_merge_list_attr(PyObject* dict, PyObject* obj, const char *attrname);
 static int safe_merge_class_dict(PyObject* dict, PyObject* aclass);
@@ -9,38 +9,6 @@ static PyObject * safe__generic_dir(PyObject *obj);
 static PyObject * safe__specialized_dir_type(PyObject *obj);
 static PyObject * safe__specialized_dir_module(PyObject *obj);
 static PyObject * safe__dir_object(PyObject *obj);
-
-PyObject *
-safe_builtin_getattr(PyObject *self, PyObject *args)
-{
-    PyObject *v, *result, *dflt = NULL;
-    PyObject *name;
-
-    if (!PyArg_UnpackTuple(args, "getattr", 2, 3, &v, &name, &dflt))
-        return NULL;
-#ifdef Py_USING_UNICODE
-    if (PyUnicode_Check(name)) {
-        name = _PyUnicode_AsDefaultEncodedString(name, NULL);
-        if (name == NULL)
-            return NULL;
-    }
-#endif
-
-    if (!PyString_Check(name)) {
-        PyErr_SetString(PyExc_TypeError,
-                        "getattr(): attribute name must be string");
-        return NULL;
-    }
-    result = PyObject_GetAttr(v, name);
-    if (result == NULL && dflt != NULL &&
-        PyErr_ExceptionMatches(PyExc_AttributeError))
-    {
-        PyErr_Clear();
-        Py_INCREF(dflt);
-        result = dflt;
-    }
-    return result;
-}
 
 static int
 safe_merge_list_attr(PyObject* dict, PyObject* obj, const char *attrname)
