@@ -3,7 +3,6 @@
 #include "hook.h"
 #include "safe_PyObject_Dir.h"
 
-extern PyObject* PyErr_Occurred(void);
 extern PyObject* PyObject_GetAttr(PyObject *v, PyObject *name);
 
 PyObject* hooked_PyObject_GetAttr(PyObject *v, PyObject *name)
@@ -88,10 +87,6 @@ PyObject* hooked_PyObject_GetAttr(PyObject *v, PyObject *name)
     return rv;
 }
 
-PyDoc_STRVAR(module_doc,
-"This module implements a \"did you mean?\" functionality on getattr/LOAD_ATTR.\n"
-"(It's not so much what it does but how it does it.)");
-
 PyObject *
 hooked_builtin_getattr(PyObject *self, PyObject *args)
 {
@@ -134,6 +129,10 @@ exist; without it, an exception is raised in that case.");
 PyMethodDef builtin_methods[1] = {
 	{"getattr", hooked_builtin_getattr, METH_VARARGS, hooked_getattr_doc}
 };
+
+PyDoc_STRVAR(module_doc,
+"This module implements a \"did you mean?\" functionality on getattr/LOAD_ATTR.\n"
+"(It's not so much what it does but how it does it.)");
 
 static PyMethodDef module_methods[] = {
 	{NULL} /* Sentinel */
