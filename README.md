@@ -22,6 +22,9 @@ Without `didyoumean`:
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
 AttributeError: 'Foo' object has no attribute 'baz'
+```
+
+```python
 >>> getattr(foo, 'baz')
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
@@ -38,7 +41,10 @@ Traceback (most recent call last):
 AttributeError: 
 
 Maybe you meant: .bar
+```
 
+```python
+>>> import didyoumean
 >>> getattr(foo, 'baz')
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
@@ -46,6 +52,8 @@ AttributeError:
 
 Maybe you meant: .bar
 ```
+
+It works on old-style classes, new-style classes, type objects, builtins, everything.
 
 #### How do I install it?
 
