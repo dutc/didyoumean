@@ -4,6 +4,7 @@ from setuptools import setup, find_packages, Extension
 from os.path import join, dirname
 
 didyoumean = Extension('didyoumean', 
+                       include_dirs=['include'], 
                        sources=['src/didyoumean.c', 
                                 'src/didyoumean-safe.c'])
 
