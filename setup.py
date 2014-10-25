@@ -4,9 +4,10 @@ from setuptools import setup, find_packages, Extension
 from os.path import join, dirname
 
 didyoumean = Extension('didyoumean', 
-                       include_dirs=['include'], 
                        sources=['src/didyoumean.c', 
-                                'src/didyoumean-safe.c'])
+                                'src/didyoumean-safe.c'],
+                       include_dirs=['src'], 
+                       depends=['src/didyoumean-safe.h'])
 
 if __name__ == '__main__':
     setup(
