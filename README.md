@@ -6,7 +6,7 @@ dutc = Don't Use This Code (!!)
 
 This module implements "Did You Mean?" functionality on AttributeError.
 
-(It's not what it does but how it does it!)
+*(It's not what it does but how it does it!)*
 
 ```python
 >>> class Foo(object):
@@ -19,6 +19,10 @@ Without `didyoumean`:
 
 ```python
 >>> foo.baz
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'Foo' object has no attribute 'baz'
+>>> getattr(foo, 'baz')
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
 AttributeError: 'Foo' object has no attribute 'baz'
@@ -35,7 +39,12 @@ AttributeError:
 
 Maybe you meant: .bar
 
->>>
+>>> getattr(foo, 'baz')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 
+
+Maybe you meant: .bar
 ```
 
 #### How do I install it?
@@ -58,19 +67,15 @@ Probably not.
 
 #### Does this approach work on ...?
 
-It works on Linux. It works on x86_64. 
-
-It's unfortunate that it works anywhere.
+It works on Linux. It works on x86_64. It's unfortunate that it works anywhere.
 
 #### Should I use this code?
 
 Definitely not.
 
-### License
+### License (GPLv3)
 
-License (GPLv3)
-
-Copyright (C) 2014 James Powell <james@dontusethiscode.com>
+Copyright © 2014 James Powell <james@dontusethiscode.com>
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
