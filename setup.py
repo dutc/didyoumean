@@ -12,7 +12,7 @@ didyoumean = Extension('didyoumean',
 if __name__ == '__main__':
     setup(
         name='dutc-didyoumean',
-        version='0.1.0',
+        version='0.1.1',
         description='"Did You Mean?" on AttributeError',
         long_description=''.join(open(join(dirname(__file__),'README.md'))),
         author='James Powell',
