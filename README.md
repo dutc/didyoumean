@@ -1,3 +1,7 @@
+### Disclaimer
+
+dutc = Don't Use This Code
+
 # Did You mean?
 
 This module implements "Did You Mean?" functionality on AttributeError.
@@ -34,7 +38,7 @@ Maybe you meant: .bar
 >>>
 ```
 
-### How Do I Turn It Off?
+## How Do I Turn It Off?
 
 You can't.
 
