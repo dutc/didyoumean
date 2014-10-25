@@ -38,7 +38,7 @@ After importing `didyoumean`:
 >>> foo.baz
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
-AttributeError: 
+AttributeError: 'Foo' object has no attribute 'baz'
 
 Maybe you meant: .bar
 ```
@@ -48,7 +48,7 @@ Maybe you meant: .bar
 >>> getattr(foo, 'baz')
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
-AttributeError: 
+AttributeError: 'Foo' object has no attribute 'baz'
 
 Maybe you meant: .bar
 ```
