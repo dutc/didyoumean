@@ -38,25 +38,25 @@ Maybe you meant: .bar
 >>>
 ```
 
-## How Do I Turn It Off?
+### How Do I Turn It Off?
 
 You can't.
 
-## Is It Portable?
+### Is It Portable?
 
 Probably not.
 
-## Does this approach work on ...?
+### Does this approach work on ...?
 
 It works on Linux. It works on x86_64. 
 
 It's unfortunate that it works anywhere.
 
-## Should I Use This Code?
+### Should I Use This Code?
 
 Definitely not.
 
-## License
+### License
 
 License (GPLv3)
 
