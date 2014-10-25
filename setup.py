@@ -9,16 +9,14 @@ didyoumean = Extension('didyoumean',
                        include_dirs=['src'], 
                        depends=['src/didyoumean-safe.h'])
 
-if __name__ == '__main__':
-    setup(
-        name='dutc-didyoumean',
-        version='0.1.1',
-        description='"Did You Mean?" on AttributeError',
-        long_description=''.join(open(join(dirname(__file__),'README.md'))),
-        author='James Powell',
-        author_email='james@dontusethiscode.com',
-        url='https://github.com/dutc/didyoumean',
-        packages=find_packages(exclude=['*demos*']),
-        ext_modules=[didyoumean],
-    )
-
+setup(
+    name='dutc-didyoumean',
+    version='0.1.1',
+    description='"Did You Mean?" on AttributeError',
+    long_description=''.join(open(join(dirname(__file__),'README.md'))),
+    author='James Powell',
+    author_email='james@dontusethiscode.com',
+    url='https://github.com/dutc/didyoumean',
+    packages=find_packages(exclude=['*demos*']),
+    ext_modules=[didyoumean],
+)
