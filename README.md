@@ -106,7 +106,7 @@ Maybe you meant: .xyzzy
 ```
 
 ```python
->>> # builtins & evertyhing else?
+>>> # builtins & everything else?
 ... 
 >>> object._new__
 Traceback (most recent call last):
