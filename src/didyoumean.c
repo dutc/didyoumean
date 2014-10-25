@@ -17,15 +17,16 @@ extern PyObject* PyObject_GetAttr(PyObject *v, PyObject *name);
 static int distance(char* a, char* b) {
 	size_t maxi = strlen(b);
 	size_t maxj = strlen(a);
+	int i, j;
 
 	unsigned int compare[maxi+1][maxj+1];
 
 	compare[0][0] = 0;
-	for (int i = 1; i <= maxi; i++) compare[i][0] = i;
-	for (int j = 1; j <= maxj; j++) compare[0][j] = j;
+	for (i = 1; i <= maxi; i++) compare[i][0] = i;
+	for (j = 1; j <= maxj; j++) compare[0][j] = j;
 
-	for (int i = 1; i <= maxi; i++) {
-		for (int j = 1; j <= maxj; j++) {
+	for (i = 1; i <= maxi; i++) {
+		for (j = 1; j <= maxj; j++) {
 			int left   = compare[i-1][j] + 1;
 			int right  = compare[i][j-1] + 1;
 			int middle = compare[i-1][j-1] + (a[j-1] == b[i-1] ? 0 : 1);
@@ -92,7 +93,8 @@ PyObject* trampoline(PyObject *v, PyObject *name)
 		PyObject* newvalue = oldvalue;
 		if(dir) {
 			int candidate_dist = PyString_Size(name);
-			for(int i = 0; i < PyList_Size(dir); ++i) {
+			int i;
+			for(i = 0; i < PyList_Size(dir); ++i) {
 				PyObject *item = PyList_GetItem(dir, i);
 				int dist = distance(PyString_AS_STRING(name), PyString_AS_STRING(item));
 				if(!candidate || dist < candidate_dist ) {
@@ -164,7 +166,8 @@ initdidyoumean(void) {
 		if(((unsigned char*)addr)[count] == 0x90)
 			break; // found the NOP
 
-	for(int i = count; i >= 0; --i)
+	int i;
+	for(i = count; i >= 0; --i)
 		((unsigned char*)addr)[i] = ((unsigned char*)addr)[i-1];
 	*((unsigned char *)addr) = 0x58;
 
