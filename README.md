@@ -42,6 +42,12 @@ You can't.
 
 Probably not.
 
+## Does this approach work on ...?
+
+It works on Linux. It works on x86_64. 
+
+It's unfortunate that it works anywhere.
+
 ## Should I Use This Code?
 
 Definitely not.
