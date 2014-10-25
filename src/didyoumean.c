@@ -84,39 +84,39 @@ PyObject* hooked_PyObject_GetAttr(PyObject *v, PyObject *name)
 		PyErr_Restore(oldtype, newvalue, oldtraceback);
 	}
 
-    return rv;
+	return rv;
 }
 
 PyObject *
 hooked_builtin_getattr(PyObject *self, PyObject *args)
 {
-    PyObject *v, *result, *dflt = NULL;
-    PyObject *name;
+	PyObject *v, *result, *dflt = NULL;
+	PyObject *name;
 
-    if (!PyArg_UnpackTuple(args, "getattr", 2, 3, &v, &name, &dflt))
-        return NULL;
+	if (!PyArg_UnpackTuple(args, "getattr", 2, 3, &v, &name, &dflt))
+		return NULL;
 #ifdef Py_USING_UNICODE
-    if (PyUnicode_Check(name)) {
-        name = _PyUnicode_AsDefaultEncodedString(name, NULL);
-        if (name == NULL)
-            return NULL;
-    }
+	if (PyUnicode_Check(name)) {
+		name = _PyUnicode_AsDefaultEncodedString(name, NULL);
+		if (name == NULL)
+		return NULL;
+	}
 #endif
 
-    if (!PyString_Check(name)) {
-        PyErr_SetString(PyExc_TypeError,
-                        "getattr(): attribute name must be string");
-        return NULL;
-    }
-    result = PyObject_GetAttr(v, name);
-    if (result == NULL && dflt != NULL &&
-        PyErr_ExceptionMatches(PyExc_AttributeError))
-    {
-        PyErr_Clear();
-        Py_INCREF(dflt);
-        result = dflt;
-    }
-    return result;
+	if (!PyString_Check(name)) {
+		PyErr_SetString(PyExc_TypeError,
+		                "getattr(): attribute name must be string");
+		return NULL;
+	}
+	result = PyObject_GetAttr(v, name);
+	if (result == NULL && dflt != NULL &&
+	PyErr_ExceptionMatches(PyExc_AttributeError))
+	{
+		PyErr_Clear();
+		Py_INCREF(dflt);
+		result = dflt;
+	}
+	return result;
 }
 
 PyDoc_STRVAR(hooked_getattr_doc,
@@ -151,10 +151,10 @@ initdidyoumean(void) {
 	 *   let's replace it with a safer version! */
 	PyObject* builtin_str = PyString_FromString("__builtin__");
 	PyObject* builtin_mod = PyImport_Import(builtin_str);
-    PyObject* builtin_dict = PyModule_GetDict(builtin_mod);
+	PyObject* builtin_dict = PyModule_GetDict(builtin_mod);
 
 	/* we might be able to get a handle on __builtin__.getattr before
- 	 *   this code runs, so let's just patch that directly */
+	 *   this code runs, so let's just patch that directly */
 	PyObject* getattr_func = PyDict_GetItemString(builtin_dict, "getattr");
 	if(getattr_func)
 		((PyCFunctionObject*)getattr_func)->m_ml->ml_meth = hooked_builtin_getattr;
