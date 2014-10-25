@@ -144,11 +144,47 @@ PyDoc_STRVAR(module_doc,
 "This module implements a \"did you mean?\" functionality on getattr/LOAD_ATTR.\n"
 "(It's not so much what it does but how it does it.)");
 
-int unprotect_page(void* addr) {
+static int unprotect_page(void* addr) {
 	int pagesize = sysconf(_SC_PAGE_SIZE);
 	int pagemask = ~(pagesize -1);
 	char* page = (char *)((size_t)addr & pagemask);
 	return mprotect(page, pagesize, PROT_READ | PROT_WRITE | PROT_EXEC);
+}
+
+static int hook_function(void* target, void* replace) {
+	int count;
+
+	if(unprotect_page(replace)) {
+		fprintf(stderr, "Could not unprotect replace mem: %p\n", replace);
+		return 0;
+	}
+
+	if(unprotect_page(target)) {
+		fprintf(stderr, "Could not unprotect target mem: %p\n", target);
+		return 0;
+	}
+
+	/* find the NOP */
+	for(count = 0; count < 255 && ((unsigned char*)replace)[count] != 0x90; ++count);
+
+	if(count == 255) {
+		fprintf(stderr, "Couldn't find the NOP.\n");
+		return 0;
+	}
+
+	/* shift everything down one */
+	memmove(replace+1, replace, count);
+
+	/* add in `pop %rax` */
+	*((unsigned char *)replace) = 0x58;
+
+	/* set up the address */
+	memcpy(jump_asm.addr, &replace, sizeof (void *));
+
+	/* smash the target function */
+	memcpy(target, &jump_asm, sizeof jump_asm);
+
+	return 1;
 }
 
 PyMODINIT_FUNC
@@ -157,36 +193,6 @@ initdidyoumean(void) {
 
 	Py_InitModule3("didyoumean", module_methods, module_doc);
 
-	void* replace = &trampoline;
-	void* target  = PyObject_GetAttr;
-
-	if(unprotect_page(replace)) {
-		fprintf(stderr, "Could not unprotect replace mem: %p\n", replace);
-		return;
-	}
-
-	if(unprotect_page(target)) {
-		fprintf(stderr, "Could not unprotect target mem: %p\n", target);
-		return;
-	}
-
-	/* find the NOP */
-	int count;
-	for(count = 0; count < 255; ++count)
-		if(((unsigned char*)replace)[count] == 0x90)
-			break; // found it!
-
-	/* shift everything down one */
-	int i;
-	for(i = count; i >= 0; --i)
-		((unsigned char*)replace)[i] = ((unsigned char*)replace)[i-1];
-
-	/* add in pop %rax */
-	*((unsigned char *)replace) = 0x58;
-
-	/* set up the address */
-	memcpy(jump_asm.addr, &replace, sizeof (void *));
-
-	/* smash the target function */
-	memcpy(target, &jump_asm, sizeof jump_asm);
+	if(hook_function(PyObject_GetAttr, &trampoline))
+		fprintf(stderr, "Function hooking failed.\n");
 }
