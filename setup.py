@@ -2,7 +2,9 @@
 
 from setuptools import setup, find_packages, Extension
 
-didyoumean = Extension('didyoumean', sources=['didyoumean.c'])
+didyoumean = Extension('didyoumean', 
+                        sources=['src/didyoumean.c', 
+                                 'src/didyoumean-safe.c'])
 
 if __name__ == '__main__':
     setup(
