@@ -1,5 +1,5 @@
 #include <Python.h>
-#include "didyoumean-safe.h"
+#include "include/didyoumean-safe.h"
 
 static int safe_merge_list_attr(PyObject* dict, PyObject* obj, const char *attrname);
 static int safe_merge_class_dict(PyObject* dict, PyObject* aclass);
