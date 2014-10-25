@@ -77,14 +77,18 @@ PyObject* trampoline(PyObject *v, PyObject *name)
 		             tp->tp_name, PyString_AS_STRING(name));
 	}
 
-	if(!rv && PyErr_Occurred() && PyErr_ExceptionMatches(PyExc_AttributeError)) {
+	if(!rv && PyErr_ExceptionMatches(PyExc_AttributeError)) {
 		PyThreadState *tstate = PyThreadState_GET();
 
 		PyObject *oldtype, *oldvalue, *oldtraceback;
 		oldtype = tstate->curexc_type;
 		oldvalue = tstate->curexc_value;
 		oldtraceback = tstate->curexc_traceback;
-		PyErr_Clear();
+
+		/* clear exception temporarily */
+		tstate->curexc_type = NULL;
+		tstate->curexc_value = NULL;
+		tstate->curexc_traceback = NULL;
 
 		PyObject* dir = safe_PyObject_Dir(v);
 		Py_LeaveRecursiveCall();
@@ -111,6 +115,7 @@ PyObject* trampoline(PyObject *v, PyObject *name)
 				Py_DECREF(oldvalue);
 			}
 		}
+		PyErr_Clear(); /* clear exception if something else has set it */
 		PyErr_Restore(oldtype, newvalue, oldtraceback);
 	}
 
