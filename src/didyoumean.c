@@ -156,12 +156,12 @@ static int hook_function(void* target, void* replace) {
 
 	if(unprotect_page(replace)) {
 		fprintf(stderr, "Could not unprotect replace mem: %p\n", replace);
-		return 0;
+		return 1;
 	}
 
 	if(unprotect_page(target)) {
 		fprintf(stderr, "Could not unprotect target mem: %p\n", target);
-		return 0;
+		return 1;
 	}
 
 	/* find the NOP */
@@ -169,7 +169,7 @@ static int hook_function(void* target, void* replace) {
 
 	if(count == 255) {
 		fprintf(stderr, "Couldn't find the NOP.\n");
-		return 0;
+		return 1;
 	}
 
 	/* shift everything down one */
@@ -184,7 +184,7 @@ static int hook_function(void* target, void* replace) {
 	/* smash the target function */
 	memcpy(target, &jump_asm, sizeof jump_asm);
 
-	return 1;
+	return 0;
 }
 
 PyMODINIT_FUNC
