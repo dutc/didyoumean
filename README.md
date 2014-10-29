@@ -2,20 +2,20 @@
 
 dutc = Don't Use This Code (!!)
 
-# Did You mean?
+# Maybe You Meant
 
-This module implements "Did You Mean?" functionality on AttributeError.
+This module implements "Maybe You Meant" functionality on AttributeError.
 
 *It's not what it does but how it does it!*
 
 ```python
 >>> class Foo(object):
 ...  def bar(self): pass
-... 
+...
 >>> foo = Foo()
 ```
 
-Without `didyoumean`:
+Without `maybeyoumeant`:
 
 ```python
 >>> foo.baz
@@ -31,10 +31,10 @@ Traceback (most recent call last):
 AttributeError: 'Foo' object has no attribute 'baz'
 ```
 
-After importing `didyoumean`:
+After importing `maybeyoumeant`:
 
 ```python
->>> import didyoumean
+>>> import maybeyoumeant
 >>> foo.baz
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
@@ -44,7 +44,7 @@ Maybe you meant: .bar
 ```
 
 ```python
->>> import didyoumean
+>>> import maybeyoumeant
 >>> getattr(foo, 'baz')
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
@@ -57,10 +57,10 @@ It works on old-style classes, new-style classes, type objects, builtins, everyt
 
 ```python
 >>> # old-style class
-... 
+...
 >>> class Foo:
 ...   def bar(self): pass
-... 
+...
 >>> Foo.baz
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
@@ -71,10 +71,10 @@ Maybe you meant: .bar
 
 ```python
 >>> # new-style class
-... 
+...
 >>> class Foo(object):
 ...   def quux(self): pass
-... 
+...
 >>> foo = Foo()
 >>> foo.baz
 Traceback (most recent call last):
@@ -86,10 +86,10 @@ Maybe you meant: .quux
 
 ```python
 >>> # types
-... 
+...
 >>> class Bar(Foo):
 ...   def xyzzy(self): pass
-... 
+...
 >>> Bar.qux
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
@@ -107,7 +107,7 @@ Maybe you meant: .xyzzy
 
 ```python
 >>> # builtins & everything else?
-... 
+...
 >>> object._new__
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
@@ -125,7 +125,7 @@ Maybe you meant: .__new__
 
 ```python
 >>> # works with getattr
-... 
+...
 >>> getattr(object, '_new__')
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
@@ -137,9 +137,9 @@ Maybe you meant: .__new__
 ```python
 >>> # works with getattr
 ... #   ... even if you don't want it to!
-... 
+...
 >>> g = getattr
->>> import didyoumean
+>>> import maybeyoumeant
 >>> getattr(object, '_new__')
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
@@ -158,7 +158,7 @@ Maybe you meant: .__new__
 #### How do I install it?
 
 ```shell
-$ pip install dutc-didyoumean
+$ pip install dutc-maybeyoumeant
 ```
 
 #### How do I turn it off?

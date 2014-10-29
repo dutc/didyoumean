@@ -14,7 +14,7 @@ if __name__ == '__main__':
     except Exception as e:
         print e
 
-    import didyoumean
+    import maybeyoumeant
 
     print foo.bar
 

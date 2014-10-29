@@ -69,14 +69,14 @@ PyObject* hooked_PyObject_GetAttr(PyObject *v, PyObject *name)
 				if(!candidate || dist < candidate_dist ) {
 					candidate = item;
 					candidate_dist = dist;
-				}	
+				}
 			}
 
 			if( candidate ) {
 				newvalue = PyString_FromFormat("%s\n\nMaybe you meant: .%s\n",
 				                                PyString_AS_STRING(oldvalue),
 				                                PyString_AS_STRING(candidate));
-		
+
 				Py_DECREF(oldvalue);
 			}
 		}
@@ -139,15 +139,15 @@ static PyMethodDef module_methods[] = {
 };
 
 PyMODINIT_FUNC
-initdidyoumean(void) {
+initmaybeyoumeant(void) {
 	__asm__("");
 
-	Py_InitModule3("didyoumean", module_methods, module_doc);
+	Py_InitModule3("maybeyoumeant", module_methods, module_doc);
 
 	if(hook_function(PyObject_GetAttr, &hooked_PyObject_GetAttr))
 		fprintf(stderr, "Function hooking failed.\n");
 
-	/* sometimes builtin_getattr calls to PyObject_Getattr get optimised out; 
+	/* sometimes builtin_getattr calls to PyObject_Getattr get optimised out;
 	 *   let's replace it with a safer version! */
 	PyObject* builtin_str = PyString_FromString("__builtin__");
 	PyObject* builtin_mod = PyImport_Import(builtin_str);
