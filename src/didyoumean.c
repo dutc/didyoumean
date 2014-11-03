@@ -1,3 +1,4 @@
+#include <limits.h>
 #include <Python.h>
 #include "levenshtein.h"
 #include "hook.h"
@@ -119,6 +120,117 @@ hooked_builtin_getattr(PyObject *self, PyObject *args)
 	return result;
 }
 
+PyObject *suggestive_import(PyObject *self, PyObject *args){
+    char *name;
+    PyObject *globals = NULL;
+    PyObject *locals = NULL;
+    PyObject *fromlist = NULL;
+    int level = 0;
+
+    PyObject *pkgutil = NULL;
+    PyObject *iter_modules_name = NULL;
+    PyObject *iter_modules = NULL;
+    PyObject *module_iter = NULL;
+    PyObject *modules = NULL;
+
+    PyObject *module = NULL;
+    PyObject *ptype = NULL;
+    PyObject *pvalue = NULL;
+    char *pval_str;
+    PyObject *ptraceback = NULL;
+
+    PyObject *tmp1, *tmp2;  // Borrowed refs.
+    char *tstr;
+    char *module_suggestion_str;
+
+    int n, dist, shortest_distance = INT_MAX;
+
+    if (!PyArg_ParseTuple(args, "s|OOOi", &name, &globals, &locals,
+                          &fromlist, &level)){
+        return NULL;
+    }
+
+    if (!globals){
+        Py_INCREF(Py_None);
+        globals = Py_None;
+    }
+    if (!locals){
+        Py_INCREF(Py_None);
+        locals = Py_None;
+    }
+    if (!fromlist){
+        Py_INCREF(Py_None);
+        fromlist = Py_None;
+    }
+
+    if (!(module = PyImport_ImportModuleLevel(name, globals, locals,
+                                              fromlist, level))){
+        PyErr_Fetch(&ptype, &pvalue, &ptraceback);
+
+        if (!(pkgutil = PyImport_ImportModuleNoBlock("pkgutil"))){
+            goto clean;
+        }
+
+        if (!(iter_modules_name = Py_BuildValue("s", "iter_modules"))){
+            goto clean;
+        }
+
+        if (!(iter_modules = PyObject_GetAttr(pkgutil, iter_modules_name))){
+            goto clean;
+        }
+
+        if (!(module_iter = PyObject_CallObject(iter_modules, NULL))){
+            goto clean;
+        }
+
+        if (!(modules = PySequence_Fast(module_iter, "expected iterator"))){
+            goto clean;
+        }
+
+        for (n = 0;n < PySequence_Length(modules);n++){
+            tmp1 = PySequence_Fast_GET_ITEM(modules, n);
+            tmp2 = PyTuple_GET_ITEM(tmp1, 1);
+
+            if (!(tstr = PyString_AS_STRING(tmp2))){
+                goto clean;
+            }
+
+            dist = distance(name, tstr);
+
+            if (dist < shortest_distance){
+                module_suggestion_str = tstr;
+                shortest_distance = dist;
+            }
+        }
+
+        if (!(pvalue = PyObject_Str(pvalue))){
+            goto clean;
+        }
+
+        if (!(pval_str = PyString_AsString(pvalue))){
+            goto clean;
+        }
+
+        PyErr_Clear();
+        PyErr_Format(PyExc_ImportError, "%s\n\nMaybe you meant: %s",
+                     pval_str, module_suggestion_str);
+    }
+
+clean:
+    Py_XDECREF(globals);
+    Py_XDECREF(locals);
+    Py_XDECREF(fromlist);
+    Py_XDECREF(pkgutil);
+    Py_XDECREF(iter_modules_name);
+    Py_XDECREF(iter_modules);
+    Py_XDECREF(module_iter);
+    Py_XDECREF(modules);
+    Py_XDECREF(module);
+
+    return module;
+}
+
+
 PyDoc_STRVAR(hooked_getattr_doc,
 "getattr(object, name[, default]) -> value\n\
 \n\
@@ -134,8 +246,12 @@ PyDoc_STRVAR(module_doc,
 "This module implements a \"did you mean?\" functionality on getattr/LOAD_ATTR.\n"
 "(It's not so much what it does but how it does it.)");
 
+PyDoc_STRVAR(suggestive_import_doc,"Wrapper around __import__ to provide\
+ suggestions when an import is invalid.");
+
 static PyMethodDef module_methods[] = {
-	{NULL} /* Sentinel */
+    {"import_", suggestive_import, METH_VARARGS, suggestive_import_doc},
+    {NULL}
 };
 
 PyMODINIT_FUNC
@@ -152,6 +268,12 @@ initdidyoumean(void) {
 	PyObject* builtin_str = PyString_FromString("__builtin__");
 	PyObject* builtin_mod = PyImport_Import(builtin_str);
 	PyObject* builtin_dict = PyModule_GetDict(builtin_mod);
+
+        PyObject* import_func = PyDict_GetItemString(builtin_dict,
+                                                     "__import__");
+
+        if (import_func)
+            ((PyCFunctionObject*)import_func)->m_ml->ml_meth = suggestive_import;
 
 	/* we might be able to get a handle on __builtin__.getattr before
 	 *   this code runs, so let's just patch that directly */
