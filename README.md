@@ -88,7 +88,7 @@ Maybe you meant: .quux
 >>> # types
 ... 
 >>> class Bar(Foo):
-...   def xyzzy(self): pass
+...   def quux(self): pass
 ... 
 >>> Bar.qux
 Traceback (most recent call last):
@@ -96,13 +96,6 @@ Traceback (most recent call last):
 AttributeError: type object 'Bar' has no attribute 'qux'
 
 Maybe you meant: .quux
-
->>> Bar.xyzz
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-AttributeError: type object 'Bar' has no attribute 'xyzz'
-
-Maybe you meant: .xyzzy
 ```
 
 ```python
